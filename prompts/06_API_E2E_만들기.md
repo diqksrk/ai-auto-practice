@@ -43,7 +43,7 @@ git commit -m "API 테스트"
 ## 실행 (키트 루트에서)
 ```bash
 git add e2e-ts/tests/api-examples.spec.ts
-git commit -m "명세 기반 API 테스트"
+git commit -m "API 테스트"
 cd e2e-ts
 npx playwright test api-examples      # 브라우저 없이 1초 안팎
 cd ..

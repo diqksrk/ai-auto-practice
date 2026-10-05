@@ -169,4 +169,6 @@ def main() -> int:
 
 
 if __name__ == "__main__":
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")   # Git Bash(cp949) 에서도 한글이 깨지지 않게
     sys.exit(main())

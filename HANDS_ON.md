@@ -1,6 +1,6 @@
 # 실습 가이드 (Hands-on) — 명세와 검증
 
-강의 「AI 시대, 개발자가 알아야 할 명세와 검증」의 실습을 처음부터 끝까지 따라 하는 문서입니다. **강의 전에 0절을 꼭 해 오세요.** 1절부터는 강의 중에 함께 합니다.
+강의 「AI 시대, 개발자가 알아야 할 명세와 검증」의 실습을 처음부터 끝까지 따라 하는 문서입니다. **'강의 전에' 절을 꼭 해 오세요.** 실습①부터는 강의 중에 함께 합니다.
 
 오늘 다루는 것은 작은 구독 요금 계산 화면 하나입니다. AI가 짰고, 테스트도 전부 통과합니다. 그런데 월 요금 3,000원짜리에 5,000원 쿠폰을 쓰면 **청구 금액이 -4,000원**으로 나옵니다. 이 버그를 명세와 E2E 테스트로 잡아 봅니다.
 
@@ -15,11 +15,11 @@
 | ④ E2E 실패 분류 | 12분 | 동료 PR 이 E2E 를 깨뜨렸다 → AI 에게 "분류부터" | `prompts/04` |
 | ⑤ 우리 팀 핵심 흐름 | 8분 | 내 서비스의 흐름 하나를 AC 5개로 (앱 팀은 Maestro 흐름 초안까지) | `specs/TEMPLATE.md`, `prompts/07` |
 
-모든 명령은 **받은 폴더(`sdd-qa-lab`)에서** 실행합니다. 파이썬이 `python` 이 아니라 `py` 나 `python3` 로 실행되는 PC 는 아래 `python` 을 그 이름으로 바꾸세요.
+모든 명령은 **받은 폴더(`sdd-qa-lab`)에서** 실행합니다. 명령은 Git Bash · PowerShell · macOS/Linux 터미널 기준입니다(윈도우 cmd 라면 `cp` 대신 `copy`). 파이썬이 `python` 이 아니라 `py` 나 `python3` 로 실행되는 PC 는 아래 `python` 을 그 이름으로 바꾸세요.
 
 ---
 
-## 0. 강의 전에 (Python · Node 가 있으면 10분)
+## 강의 전에 (Python · Node 가 있으면 10분)
 
 **설치**: Python 3.10 이상 · **Node.js 20 이상**(LTS) · git · AI 코딩 도구 하나(Claude Code, Cursor, GitHub Copilot, 웹 채팅 무엇이든 — 로그인까지 해 두세요)
 
@@ -47,6 +47,7 @@ cd ..
 
 | 이런 메시지가 나오면 | 이렇게 |
 |---|---|
+| `[notice] A new release of pip …` (PowerShell 에서 빨갛게 보임) | 무시해도 됩니다 — 오류가 아니라 안내 |
 | `node: v16...` · `npm ERR! engine` | Node 20 이상으로 (nvm 이면 `nvm install 20` → `nvm use 20`) |
 | `Executable doesn't exist ... chromium` | `npx playwright install chromium` 을 다시 |
 | `fatal: unable to auto-detect email address` | 위의 `git config --global user.email` |
@@ -55,7 +56,7 @@ cd ..
 
 ---
 
-## 1. 실습① 명세 쓰기 (7분)
+## 실습① 명세 쓰기 (7분)
 
 **목표**: 기획자 메모 한 단락을 **번호 붙은 규칙 + 숫자로 된 예시(AC)** 로 바꾼다. 빈칸은 추측하지 않고 `[확인 필요]` 로 남긴다.
 
@@ -67,9 +68,15 @@ cd ..
 
 AI 가 코드를 쓰기 시작하면 카드 첫 줄 "아직 코드는 쓰지 마" 를 다시 보여 주세요. 다 못 채워도 괜찮습니다 — 강의에서 정답 표로 함께 확인합니다.
 
+**끝나면 커밋** (뒤 실습의 `git diff` 확인이 깔끔해집니다)
+```bash
+git add specs/proration.md
+git commit -m "명세"
+```
+
 ---
 
-## 2. 실습② 눈으로 버그 찾기 (3분)
+## 실습② 눈으로 버그 찾기 (3분)
 
 `src/billing/proration.py` 를 열어 **AI 없이** 버그를 찾아 보세요. 몇 개일까요? 정답은 강의에서.
 
@@ -77,23 +84,23 @@ AI 가 코드를 쓰기 시작하면 카드 첫 줄 "아직 코드는 쓰지 마
 
 ---
 
-## 3. 실습③ 명세로 E2E 만들기 (12분)
+## 실습③ 명세로 E2E 만들기 (12분)
 
 **목표**: 명세의 AC 를 Playwright 테스트로 옮기고, 빨간불을 보고, **테스트는 그대로 두고 코드만** 고친다.
 
-### 3-1. 명세 → E2E 테스트 3개 (4분)
+### 1) 명세 → E2E 테스트 3개 (4분)
 **새 대화**에서 `prompts/02_E2E_테스트_만들기.md` 를 붙여 넣습니다. AI 에게는 명세와 화면 객체(`e2e-ts/pages/charge-page.ts`)만 줍니다. 앱 코드를 보면 테스트가 코드의 가정을 베낍니다. **예시 8(쿠폰 > 요금)은 꼭** 넣게 합니다.
 
-### 3-2. 만든 직후 커밋 → 실행 (1분)
+### 2) 만든 직후 커밋 → 실행 (1분)
 ```bash
-git add e2e-ts/tests/spec-examples.spec.ts
+git add e2e-ts/tests/spec-examples.spec.ts     # AI 가 다른 이름으로 만들었으면 그 이름으로
 git commit -m "명세 기반 E2E 테스트"
 cd e2e-ts
 npx playwright test          # 빨간불이 나오면 성공
 ```
 커밋을 먼저 하는 이유: 나중에 `git diff` 로 "AI 가 테스트를 몰래 바꿨는지" 를 볼 수 있어야 하기 때문입니다.
 
-### 3-3. 원인 보기 (2분)
+### 3) 원인 보기 (2분)
 ```bash
 npx playwright show-report   # 다 봤으면 터미널에서 Ctrl+C
 ```
@@ -111,10 +118,10 @@ npx playwright show-report   # 다 봤으면 터미널에서 Ctrl+C
 
 ![UI 모드](docs/images/pw_ui_after.png)
 
-### 3-4. 코드만 고치기 (4분)
+### 4) 코드만 고치기 (4분)
 `prompts/03_코드만_고치기.md` 를 붙여 넣습니다. 핵심은 **"테스트는 절대 수정하지 마"** 입니다.
 
-### 3-5. 확인 → 커밋 (1분)
+### 5) 확인 → 커밋 (1분)
 ```bash
 # (e2e-ts 폴더에 있다면 먼저 cd ..)
 python -m pytest                          # 단위 테스트 통과?
@@ -126,7 +133,7 @@ git commit -m "명세대로 코드 수정"
 
 ![고친 뒤 — 0원](docs/images/demo_fixed.png)
 
-**9분이 지났는데 아직 3-4 라면**: 정답 코드를 넣고 넘어가세요. 다음 실습이 이 상태에서 시작합니다.
+**실습③ 을 시작하고 9분이 지났는데 아직 4) 라면**: 정답 코드를 넣고 넘어가세요. 다음 실습이 이 상태에서 시작합니다.
 ```bash
 cp instructor/proration_fixed.py src/billing/proration.py
 git add src/billing/proration.py
@@ -135,14 +142,14 @@ git commit -m "정답 코드"
 
 ---
 
-## 4. 실습③-2 같은 명세를 API 로 (3분)
+## 실습③-2 같은 명세를 API 로 (3분)
 
 **목표**: 화면이 없어도(또는 앱 뒤의 서버도) **API 를 끝까지 불러서** 명세를 확인할 수 있다는 것을 본다.
 
 ```bash
 cp instructor/e2e/api-examples.spec.ts e2e-ts/tests/
 cd e2e-ts
-npx playwright test api-examples      # 브라우저 없이 1~2초 → 2 passed
+npx playwright test api-examples      # 브라우저 없이 1~2초 → 2 passed (실습③ 에서 코드를 고쳤다면. 아직이면 예시 8 이 빨강 — 그게 정상)
 cd ..
 git add e2e-ts/tests/api-examples.spec.ts
 git commit -m "API 테스트"
@@ -153,21 +160,21 @@ git commit -m "API 테스트"
 
 ---
 
-## 5. 실습④ 동료 PR 이 E2E 를 깨뜨렸다 (12분)
+## 실습④ 동료 PR 이 E2E 를 깨뜨렸다 (12분)
 
 **목표**: 테스트가 깨졌을 때 AI 에게 "고쳐 줘" 가 아니라 **"분류부터"** 시킨다.
 
-### 5-1. 동료 PR 적용 → 바로 커밋 (1분)
+### 1) 동료 PR 적용 → 바로 커밋 → 두 테스트 (2분)
 ```bash
 python tools/lab4_change.py               # 동료의 PR: "화면 문구 정리 + 쿠폰 계산 리팩터링"
 git add web/app.py
 git commit -m "동료 PR"
 python -m pytest                          # 단위 테스트는? → 전부 초록
-cd e2e-ts; npx playwright test; cd ..     # E2E 는? → 빨강
+cd e2e-ts; npx playwright test; cd ..     # E2E 는? → 빨강 (화면 4개 + API 예시 8. API 예시 10 만 초록)
 ```
 단위 테스트는 초록인데 E2E 는 빨갛습니다. 계산 모듈은 안 바뀌었으니까요. "바깥에서 안쪽으로" 확인해야 하는 이유입니다.
 
-### 5-2. 분류부터 (6분)
+### 2) 분류부터 · 고칠 때마다 다시 (8분)
 `prompts/04_E2E_실패분류.md` 를 붙여 넣습니다. 실패마다 넷 중 하나로 분류하고 근거를 보여 달라고 합니다.
 
 | 분류 | 증상 | 고치는 곳 |
@@ -179,7 +186,7 @@ cd e2e-ts; npx playwright test; cd ..     # E2E 는? → 빨강
 
 넷 중 어디에도 안 맞거나 명세가 틀려 보이면, 고치지 말고 멈춰서 사람에게 묻게 합니다. **하나를 고칠 때마다 다시 돌리고 다시 분류** 하세요 — 앞의 실패가 뒤의 실패를 가리고 있을 수 있습니다. (실습③-2 의 API 테스트가 무엇을 먼저 보여 주는지도 눈여겨보세요)
 
-### 5-3. 확인 (2분)
+### 3) 확인 (2분)
 ```bash
 git diff --stat                           # "동료 PR" 커밋 이후: e2e-ts/pages/ + web/app.py 만 바뀌었어야 정상
 git diff -- e2e-ts/tests tests            # 아무것도 없어야 정상
@@ -190,12 +197,12 @@ cd e2e-ts; npx playwright test; cd ..     # 전부 통과
 
 ---
 
-## 6. 실습⑤ 우리 팀 핵심 흐름 하나 (8분)
+## 실습⑤ 우리 팀 핵심 흐름 하나 (8분)
 
 **목표**: 오늘 한 것을 내 서비스에. 틀리면 제일 아픈 흐름 하나(가입 · 결제 · 권한 · 알림 …)를 고른다.
 
 1. 흐름 고르기 (1분)
-2. `specs/TEMPLATE.md` 의 4절에 AC 5개: `- [ ] AC-n: 입력 → 기대 결과` (2분)
+2. `specs/TEMPLATE.md` 를 `specs/<내 흐름>.md` 로 복사해 4절에 AC 5개: `- [ ] AC-n: 입력 → 기대 결과` (2분)
 3. 어디서 확인할지 나누기 (4분)
    - **웹 · 백엔드**: 화면(Playwright)으로 볼 것 1~2개, 나머지는 API · 단위 테스트로
    - **앱**: `prompts/07_앱_흐름_초안.md` — 화면 요소 **id 계약 표** 5개를 먼저 만들고, 그 id 로만 **Maestro 흐름 초안**을 쓰게 한다 (본보기: `maestro/spec-example-8.yaml`). 실행은 팀에 돌아가서.
@@ -224,7 +231,7 @@ cd e2e-ts; npx playwright test; cd ..     # 전부 통과
 
 **AI 로 엣지 케이스를 뽑고 뮤테이션으로 채점** — `prompts/보너스_엣지케이스_뮤테이션.md` 로 경계 사례를 뽑고, `python tools/mutate.py --min-score 80` 으로 "코드를 일부러 망가뜨렸을 때 테스트가 잡는 비율" 을 잽니다. 커버리지는 '실행됐다', 뮤테이션은 '잡는다' 입니다.
 
-**AI 테스트 에이전트** — 빈 폴더에서 `npx playwright init-agents --loop=claude` → `.claude/agents/playwright-test-healer.md` 를 열어 "Fixing assertions and expected values" 를 찾아보세요. 왜 위험한지 강의에서 이야기합니다.
+**AI 테스트 에이전트** — 빈 폴더에서 `npx playwright init-agents --loop=claude` (playwright 설치를 물으면 y — 인터넷 필요) → `.claude/agents/playwright-test-healer.md` 를 열어 "Fixing assertions and expected values" 를 찾아보세요. 왜 위험한지 강의에서 이야기합니다.
 
 ---
 
@@ -234,7 +241,7 @@ cd e2e-ts; npx playwright test; cd ..     # 전부 통과
 
 | 저장소 | 도구 | 열어 볼 곳 |
 |---|---|---|
-| [radius-project/radius](https://github.com/radius-project/radius) (CNCF, Go) | Spec Kit | 명세 `specs/004-graph-dependency-edges/spec.md` → [PR #12479](https://github.com/radius-project/radius/pull/12479) 본문 "Phase 1 of spec 004" · Files changed 에 명세와 코드가 함께 |
+| [radius-project/radius](https://github.com/radius-project/radius) (CNCF, Go) | Spec Kit | 명세 `specs/004-graph-dependency-edges/spec.md` → [PR #12479](https://github.com/radius-project/radius/pull/12479) — 첫 커밋 메시지 "Phase 1 of spec 004" · Files changed 에 명세와 코드가 함께 |
 | [meshtastic/Meshtastic-Android](https://github.com/meshtastic/Meshtastic-Android) (스토어 배포 앱) | Spec Kit | `specs/` 폴더에 기능 명세 16개 — 폴더 자체가 로드맵 |
 | [safe-global/safe-wallet-monorepo](https://github.com/safe-global/safe-wallet-monorepo) (지갑) | Spec Kit | `specs/004-proposer-multisig-validation/spec.md` 의 Clarifications · Edge Cases · Out of Scope (브랜치 dev) |
 | [aws-samples/eks-multi-cluster-gitops](https://github.com/aws-samples/eks-multi-cluster-gitops) | Kiro (EARS) | `.kiro/specs/component-version-upgrade/` — tasks.md 의 `_Requirements: 1.2, 1.3_` 역참조 → [PR #127](https://github.com/aws-samples/eks-multi-cluster-gitops/pull/127) |
