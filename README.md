@@ -42,7 +42,7 @@
 | `AGENTS.md`, `CLAUDE.md` | AI 에게 주는 프로젝트 규칙 |
 | `.claude/settings.json` | Claude Code 가 파일을 고칠 때마다 단위 테스트를 돌리는 설정 (pytest 가 깔린 파이썬을 `python` → `python3` → `py` 순서로 찾아 한 번 실행. 윈도우는 Git Bash 필요) |
 | `.github/` | PR 에서 단위 테스트 + E2E 를 돌리는 CI, PR 템플릿(AC 이행 현황), 테스트 변경을 따로 승인받는 CODEOWNERS 예시 |
-| `instructor/` | 막혔을 때 쓰는 정답. 먼저 보지 말고 막혔을 때만 |
+| `instructor/` | 막혔을 때 쓰는 정답. 먼저 보지 말고 막혔을 때만. [instructor/README.md](instructor/README.md) 는 강사 · 혼자 다시 해 보는 사람용 상세 따라 하기 (실제 출력 · AI 의 실제 답 · 정답) |
 | `e2e/` | (선택) 같은 E2E 를 파이썬 Playwright 로 쓴 버전 |
 | `maestro/` | (보너스) 같은 명세 예시 8 을 앱 테스트 도구 Maestro 로 — Java 17+ 와 Maestro 설치 필요, 파일 맨 위 설명 참고 |
 

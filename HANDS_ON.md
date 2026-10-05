@@ -54,6 +54,11 @@ cd ..
 | `'python' 은(는) ... 아닙니다` · `command not found` | `py` 나 `python3` 로. E2E 는 `PYTHON=py npx playwright test` (PowerShell: `$env:PYTHON="py"; npx playwright test`) |
 | `http://127.0.0.1:8000 is already used` | 따로 띄워 둔 `python web/app.py` 를 Ctrl+C 로 끄고 다시 |
 
+**AI 도구에 카드 주는 법** — 카드는 `prompts/` 의 md 파일입니다. 회색 상자(```) 안의 글을 복사해 AI 에게 보냅니다. 상자 밖은 사람이 읽는 설명입니다.
+- Claude Code · Cursor · Copilot 처럼 **폴더를 여는 도구**: `sdd-qa-lab` 폴더에서 엽니다(Claude Code 는 `cd sdd-qa-lab` → `claude`). 카드의 `(여기에 … 붙여 넣기)` 줄은 "specs/proration.md 를 읽고" 처럼 파일 이름으로 바꿔 씁니다. AI 가 파일을 고치거나 명령을 돌리려 하면 허락을 묻습니다. 무엇을 하려는지 읽고 허락하세요.
+- **웹 채팅**: 그 줄 자리에 파일 내용을 붙여 넣습니다. AI 가 준 결과는 내가 파일에 붙여 넣고 저장합니다.
+- 카드에 **"새 대화에서"** 라고 있으면 대화를 새로 시작합니다(Claude Code 는 `/clear`). 앞에서 본 코드를 테스트가 베끼지 않게 하려는 것입니다.
+
 ---
 
 ## 실습① 명세 쓰기 (7분)
@@ -257,4 +262,4 @@ cd e2e-ts; npx playwright test; cd ..     # 전부 통과
 - **관문** — [ ] AI 편집마다 테스트 · [ ] PR 에서 CI 필수 + 브랜치 보호 · [ ] 테스트 변경은 따로 승인 · [ ] 출시 전 QA 점검 리스트 (Go / No-Go)
 - **AI 검증** — [ ] 실패는 분류부터 · [ ] 제품 버그면 테스트 수정 금지 · [ ] 쓴 AI ≠ 검증 AI · [ ] 최종 판단은 사람
 
-`instructor/` 는 막혔을 때 쓰는 정답입니다. 먼저 보지 말고 막혔을 때만 여세요.
+`instructor/` 는 막혔을 때 쓰는 정답입니다. 먼저 보지 말고 막혔을 때만 여세요. 강의가 끝난 뒤 혼자 다시 해 볼 때는 [instructor/README.md](instructor/README.md) 를 보세요. 단계마다 실제 출력, AI 의 실제 답, 정답이 들어 있습니다.
