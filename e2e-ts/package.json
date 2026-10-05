@@ -1,0 +1,13 @@
+{
+  "name": "sdd-qa-lab-e2e",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "report": "playwright show-report",
+    "ui": "playwright test --ui",
+    "codegen": "playwright codegen http://127.0.0.1:8000"
+  },
+  "devDependencies": {
+    "@playwright/test": "~1.60.0"
+  }
+}

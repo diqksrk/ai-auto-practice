@@ -1,0 +1,37 @@
+# (보너스) 명세 예시 8 을 앱 테스트 도구 Maestro 로 — 쿠폰이 요금보다 커도 0원 (R5)
+#
+# 준비: Java 17 이상 + Maestro CLI (https://docs.maestro.dev 의 설치 안내). 웹 지원은 베타.
+# 실행: 키트 루트에서 python web/app.py 로 앱을 띄운 뒤, 다른 터미널에서
+#       maestro test maestro/spec-example-8.yaml
+# 결과: 고치기 전 코드면 마지막 줄(assertVisible)이 FAILED — 화면에 -4,000원. 고친 뒤면 COMPLETED.
+#       (윈도우에서 한글이 깨지면 JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8 를 먼저 설정)
+#
+# 앱이면 맨 위 url 대신 appId: com.example.billing 처럼 쓰고, 에뮬레이터 · 시뮬레이터에서 같은 명령으로 돈다.
+# 주의: 청구월의 연도 칸은 id · 글자로 눌리지 않아 화면 좌표(point)로 눌렀다. 창 크기가 바뀌면 깨진다.
+#       실제 앱이라면 테스트용 id 를 달거나 값을 바로 넣는 경로를 만든다 — 앱 E2E 가 가장 자주 깨지는 곳.
+url: http://127.0.0.1:8000
+---
+- launchApp
+- tapOn:
+    id: "price"
+- eraseText
+- inputText: "3000"
+- tapOn:
+    id: "start"
+- inputText: "20260921"
+- tapOn:
+    id: "month"
+- inputText: "Sep"
+- tapOn:
+    point: "40%,29%"
+- inputText: "2026"
+- tapOn:
+    id: "coupon-kind"
+- inputText: "정액"
+- tapOn:
+    id: "coupon-value"
+- eraseText
+- inputText: "5000"
+- tapOn: "계산"
+- takeScreenshot: after-calc
+- assertVisible: "청구 금액: 0원"

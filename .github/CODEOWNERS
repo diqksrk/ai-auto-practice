@@ -1,0 +1,8 @@
+# "테스트 파일 변경은 따로 승인" 을 GitHub 에서 강제하는 방법 (오늘의 체크리스트 · 관문)
+#
+# 1) 아래 두 줄의 # 을 지우고 @your-github-id 를 테스트 담당자(또는 팀 @org/team)로 바꾼다.
+# 2) Settings → Branches(또는 Rules) → main 보호 규칙 → "Require review from Code Owners" 를 켠다.
+# → 테스트 파일을 바꾼 PR 은 담당자가 승인해야 머지된다. AI 가 기대값을 바꿔 초록불을 만든 PR 을 사람이 한 번 더 본다.
+#
+# /tests/         @your-github-id
+# /e2e-ts/tests/  @your-github-id

@@ -1,0 +1,11 @@
+__pycache__/
+.pytest_cache/
+*.pyc
+.venv/
+
+# 실습 중 생기는 것 (커밋하지 않는다)
+node_modules/
+e2e-ts/package-lock.json
+e2e-ts/playwright-report/
+e2e-ts/test-results/
+.lab4_backup/

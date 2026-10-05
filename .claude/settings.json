@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && for p in python python3 py; do if \"$p\" -c \"import pytest\" >/dev/null 2>&1; then \"$p\" -m pytest -q -x 1>&2 || exit 2; exit 0; fi; done; echo \"pytest 를 찾지 못했습니다 - python -m pip install -r requirements.txt\" 1>&2; exit 2"
+          }
+        ]
+      }
+    ]
+  }
+}
