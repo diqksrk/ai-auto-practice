@@ -207,6 +207,15 @@ cd e2e-ts; npx playwright test; cd ..     # 전부 통과
 
 ## 보너스
 
+**API 테스트를 더 써 보기 (백엔드 개발자라면 여기가 본업)** — 화면 없이 명세의 규칙을 API 로 하나씩 잠급니다. AI 에게 `prompts/06` 의 API 약속과 명세를 주고 이렇게 시켜 보세요.
+```
+명세의 규칙마다 API 테스트를 하나씩 더 만들어 줘. e2e-ts/tests/api-rules.spec.ts 에.
+- 정률 쿠폰 150% → 400 (R6), 월 요금 -1 → 400, 필수 필드(price)가 빠진 요청 → 400
+- 31일 달 · 윤년 2월 · 지난달부터 이용 — 기대값은 명세 표에서만
+- 오류는 상태 코드와 error 가 비어 있지 않은지만 본다. 테스트 파일만 만들고 멈춰.
+```
+`npx playwright test api-rules` — 1~2초에 끝납니다. 이게 계약 테스트의 시작입니다: **명세(계약) → API 테스트 → 구현**. 앱 화면이 바뀌어도 이 테스트는 깨지지 않습니다.
+
 **같은 버그를 앱 테스트 도구 Maestro 로** — Java 17 이상과 [Maestro CLI](https://docs.maestro.dev) 가 필요합니다. `python web/app.py` 를 띄운 뒤 다른 터미널에서 `maestro test maestro/spec-example-8.yaml`. 고치기 전 코드면 마지막 줄이 FAILED, 고친 뒤면 COMPLETED.
 
 | 고치기 전 | 고친 뒤 |
@@ -216,6 +225,21 @@ cd e2e-ts; npx playwright test; cd ..     # 전부 통과
 **AI 로 엣지 케이스를 뽑고 뮤테이션으로 채점** — `prompts/보너스_엣지케이스_뮤테이션.md` 로 경계 사례를 뽑고, `python tools/mutate.py --min-score 80` 으로 "코드를 일부러 망가뜨렸을 때 테스트가 잡는 비율" 을 잽니다. 커버리지는 '실행됐다', 뮤테이션은 '잡는다' 입니다.
 
 **AI 테스트 에이전트** — 빈 폴더에서 `npx playwright init-agents --loop=claude` → `.claude/agents/playwright-test-healer.md` 를 열어 "Fixing assertions and expected values" 를 찾아보세요. 왜 위험한지 강의에서 이야기합니다.
+
+---
+
+## 더 보기 — 지금 명세 주도(SDD)로 개발 중인 공개 저장소
+
+강의에서 본 흐름(명세 → 작업 → PR 이 명세를 가리킨다)을 실제 프로젝트에서 열어 보세요. 모두 실제 제품입니다 (2026-10-05 확인).
+
+| 저장소 | 도구 | 열어 볼 곳 |
+|---|---|---|
+| [radius-project/radius](https://github.com/radius-project/radius) (CNCF, Go) | Spec Kit | 명세 `specs/004-graph-dependency-edges/spec.md` → [PR #12479](https://github.com/radius-project/radius/pull/12479) 본문 "Phase 1 of spec 004" · Files changed 에 명세와 코드가 함께 |
+| [meshtastic/Meshtastic-Android](https://github.com/meshtastic/Meshtastic-Android) (스토어 배포 앱) | Spec Kit | `specs/` 폴더에 기능 명세 16개 — 폴더 자체가 로드맵 |
+| [safe-global/safe-wallet-monorepo](https://github.com/safe-global/safe-wallet-monorepo) (지갑) | Spec Kit | `specs/004-proposer-multisig-validation/spec.md` 의 Clarifications · Edge Cases · Out of Scope (브랜치 dev) |
+| [aws-samples/eks-multi-cluster-gitops](https://github.com/aws-samples/eks-multi-cluster-gitops) | Kiro (EARS) | `.kiro/specs/component-version-upgrade/` — tasks.md 의 `_Requirements: 1.2, 1.3_` 역참조 → [PR #127](https://github.com/aws-samples/eks-multi-cluster-gitops/pull/127) |
+| [Fission-AI/OpenSpec](https://github.com/Fission-AI/OpenSpec) | OpenSpec | `openspec/changes/add-version-command/` → [PR #2001](https://github.com/Fission-AI/OpenSpec/pull/2001) 변경 제안 + 코드 + 테스트 |
+| [kubernetes/enhancements](https://github.com/kubernetes/enhancements) | KEP (사람이 쓰는 명세) | 사이드카 컨테이너 [KEP PR #3761](https://github.com/kubernetes/enhancements/pull/3761) → 구현 [kubernetes#116429](https://github.com/kubernetes/kubernetes/pull/116429) |
 
 ---
 
