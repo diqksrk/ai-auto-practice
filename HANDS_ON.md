@@ -1,7 +1,5 @@
 # 실습 가이드 (Hands-on) — 명세와 검증
 
-강의 「AI가 만든 코드, 테스트가 통과하면 괜찮을까?」(1회차)의 실습을 처음부터 끝까지 따라 하는 문서입니다. **'강의 전에' 절을 꼭 해 오세요.** 실습①부터는 강의 중에 함께 합니다.
-
 오늘 다루는 것은 작은 구독 요금 계산 화면 하나입니다. AI가 짰고, 테스트도 전부 통과합니다. 그런데 월 요금 3,000원짜리에 5,000원 쿠폰을 쓰면 **청구 금액이 -4,000원**으로 나옵니다. 이 버그를 명세와 E2E 테스트로 잡아 봅니다.
 
 | 실습 | 시간 | 하는 일 | 카드 |
@@ -13,8 +11,6 @@
 | ③-2 같은 명세를 API 로 | 3분 | 브라우저 없이 API 를 끝까지 부르는 테스트 | `prompts/06` |
 | ④ 동료 PR 이 E2E 를 깨뜨렸다 | 15분 | 단위는 초록 · E2E 는 빨강 → AI 에게 분류부터 → 화면 변경은 `pages/` 만 · 제품 버그는 코드만 → `git diff` 로 사람이 판정 | `prompts/04` |
 | ⑤ 우리 팀 핵심 흐름 | 15분 | 내 서비스의 흐름 하나를 AC 5개로 (앱 팀은 Maestro 흐름 초안까지) | `specs/TEMPLATE.md`, `prompts/07` |
-
-강의는 3시간입니다(강의 80분 · 실습 73분 · 휴식 10분 두 번 · 질문 7분). 시작할 때 5분 동안 설치를 같이 확인하고, [codegen 녹화](#codegen-녹화-따라-하기-7분)는 실습③ 바로 앞에 다 같이 손으로 합니다. 이 문서의 슬라이드 번호는 강의 자료 v3.9(129장) 기준입니다.
 
 모든 명령은 **받은 폴더(`sdd-qa-lab`)에서** 실행합니다(보너스 '테스트 에이전트 따라 하기' 만 연습용 폴더 `agents-practice` 에서). 명령은 Git Bash · PowerShell · macOS/Linux 터미널 기준입니다(윈도우 cmd 라면 `cp` 대신 `copy`). 파이썬이 `python` 이 아니라 `py` 나 `python3` 로 실행되는 PC 는 아래 `python` 을 그 이름으로 바꾸세요.
 
@@ -51,7 +47,7 @@ SourceTree 에 딸린 git(embedded)만 있으면 터미널에서는 `git` 이 �
 
 **회사 PC** 라 설치 권한이 없으면 강의 전에 미리 IT 에 요청하세요. 브라우저(약 300MB)도 아래 '받기와 확인' 에서 미리 받아 둡니다.
 
-보너스 '테스트 에이전트 따라 하기'는 Claude Code 로 합니다 — VS Code + Claude Code 확장, 또는 터미널의 `claude`. 없으면 건너뜁니다(강의에서는 화면으로만 봅니다). 앱 테스트 도구 보너스(Maestro)는 Java 17 이상 · Maestro CLI 가 필요합니다(오늘의 웹 화면에 돌리므로 에뮬레이터는 없어도 됩니다) — 무겁고 오래 걸리니 앱 팀만.
+보너스 '테스트 에이전트 따라 하기'는 Claude Code 로 합니다 — VS Code + Claude Code 확장, 또는 터미널의 `claude`. 없으면 건너뜁니다. 앱 테스트 도구 보너스(Maestro)는 Java 17 이상 · Maestro CLI 가 필요합니다(오늘의 웹 화면에 돌리므로 에뮬레이터는 없어도 됩니다) — 무겁고 오래 걸리니 앱 팀만.
 
 git 을 처음 쓰면 이름과 메일을 한 번 정해 둡니다. 실습에서 커밋합니다.
 ```bash
@@ -102,7 +98,7 @@ cd ..
 
 **완료 기준**: [ ] 규칙에 번호 · [ ] 예시의 기대값이 숫자 · [ ] 31일 달 · 윤년 2월 · 지난달부터 이용 · 쿠폰 > 요금이 들어 있다 · [ ] 모르는 건 `[확인 필요]`
 
-AI 가 코드를 쓰기 시작하면 카드 첫 줄 "아직 코드는 쓰지 마" 를 다시 보여 주세요. 다 못 채워도 괜찮습니다 — 강의에서 정답 표로 함께 확인합니다.
+AI 가 코드를 쓰기 시작하면 카드 첫 줄 "아직 코드는 쓰지 마" 를 다시 보여 주세요. 다 못 채워도 괜찮습니다.
 
 **끝나면 커밋** (뒤 실습의 `git diff` 확인이 깔끔해집니다)
 ```bash
@@ -114,7 +110,7 @@ git commit -m "명세"
 
 ## 실습② 눈으로 버그 찾기 (3분)
 
-`src/billing/proration.py` 를 열어 **AI 없이** 버그를 찾아 보세요. 몇 개일까요? 정답은 강의에서.
+`src/billing/proration.py` 를 열어 **AI 없이** 버그를 찾아 보세요. 몇 개일까요?
 
 (이 코드는 단위 테스트 7개를 전부 통과하고, 라인 커버리지가 93% 입니다)
 
@@ -122,7 +118,7 @@ git commit -m "명세"
 
 ## codegen 녹화 따라 하기 (7분)
 
-강의 슬라이드 68 · 69 를 그대로 따라 하는 순서이고(막히면 70), 강의 중에 다 같이 합니다(슬라이드 71). 녹화기(codegen)는 '무엇을 했나' 만 적습니다. '무엇이 맞나'(기대값)는 명세 4절 8번 줄에서 옮겨 적는다는 것을 직접 봅니다. 터미널을 두 개 씁니다.
+녹화기(codegen)는 '무엇을 했나' 만 적습니다. '무엇이 맞나'(기대값)는 명세 4절 8번 줄에서 옮겨 적는다는 것을 직접 봅니다. 터미널을 두 개 씁니다.
 
 **1) 터미널 ① — 앱 켜기** (키트 맨 위 폴더 `sdd-qa-lab` 에서. 녹화가 끝날 때까지 켜 둡니다)
 ```bash
@@ -159,7 +155,7 @@ npx playwright test tests/my-codegen.spec.ts     # → 1 passed. 버그(-4,000�
 ```
 빨강 — 버그를 잡았습니다. 테스트의 기대값을 바꾸는 건 이번 한 번뿐입니다(녹화가 버그 값을 적었을 때). 명세 값으로 빨간불이 나면 그다음 고치는 건 코드입니다.
 
-(선택) 녹화 코드를 화면 객체 모양으로 정리시키려면 8) 에서 지우기 **전에** 아래를 AI 에게 보냅니다(슬라이드 73 의 카드). 카드 안의 `tests/` · `pages/` 는 `e2e-ts/` 안의 폴더입니다(키트 맨 위의 `tests/` 는 단위 테스트). 결과는 버그 코드에서 빨강이 정상입니다 — 초록이면 AI 가 기대값을 건드린 것이니 `git diff` 로 '0원' 이 그대로인지 봅니다.
+(선택) 녹화 코드를 화면 객체 모양으로 정리시키려면 8) 에서 지우기 **전에** 아래를 AI 에게 보냅니다. 카드 안의 `tests/` · `pages/` 는 `e2e-ts/` 안의 폴더입니다(키트 맨 위의 `tests/` 는 단위 테스트). 결과는 버그 코드에서 빨강이 정상입니다 — 초록이면 AI 가 기대값을 건드린 것이니 `git diff` 로 '0원' 이 그대로인지 봅니다.
 ```
 e2e-ts/tests/my-codegen.spec.ts 는 codegen 녹화본이야.
 e2e-ts/pages/charge-page.ts 의 ChargePage 로 다시 써 줘.
@@ -180,7 +176,7 @@ e2e-ts/pages/charge-page.ts 의 ChargePage 로 다시 써 줘.
 rm tests/my-codegen.spec.ts      # e2e-ts 에서 (윈도우 cmd 라면 del tests\my-codegen.spec.ts)
 ```
 
-**따라 하다 막히면** (강의 준비 중 Windows PowerShell 에서 실제로 본 메시지)
+**따라 하다 막히면**
 
 | 이런 글이 보이면 | 왜 | 이렇게 |
 |---|---|---|
@@ -201,7 +197,7 @@ Playwright 명령은 전부 `e2e-ts` 안에서 — 앱은 녹화할 때만 켜�
 
 **목표**: 명세의 AC 를 Playwright 테스트로 옮기고, 빨간불을 보고, **테스트는 그대로 두고 코드만** 고친다.
 
-시작 전에: 따로 띄운 `python web/app.py` 가 있으면 Ctrl+C 로 끕니다. 그리고 **모두 정답 명세로 바꾸고 시작합니다** — 내가 쓴 명세는 예시 번호가 정답 표(슬라이드 44)와 거의 다르고, 리포트에 찍히는 '예시 8' 은 정답 표 번호입니다. 내 명세는 앞 커밋에 그대로 남아 있습니다(`git show HEAD~1:specs/proration.md`).
+시작 전에: 따로 띄운 `python web/app.py` 가 있으면 Ctrl+C 로 끕니다. 그리고 **모두 정답 명세로 바꾸고 시작합니다** — 리포트에 찍히는 '예시 8' 이 정답 명세의 번호이기 때문입니다. 내 명세는 앞 커밋에 그대로 남아 있습니다(`git show HEAD~1:specs/proration.md`).
 ```bash
 cp instructor/proration_spec.md specs/proration.md
 git add specs/proration.md
@@ -345,7 +341,7 @@ git add e2e-ts/pages web/app.py; git commit -m "분류 후 수정"
 
 1. 흐름 고르기 (1분)
 2. `specs/TEMPLATE.md` 를 `specs/<내 흐름>.md` 로 복사해 4절에 AC 5개: `- [ ] AC-n: 입력 → 기대 결과` (3분)
-   - AI 에게 초안을 받아도 됩니다. 단 기대값 · 경계 · `[확인 필요]` 는 내가 읽고 고칩니다 — 리허설에서 AI 가 서로 부딪히는 AC("버튼 비활성" 과 "누르면 안내")와 추측한 오류 문구를 확정값처럼 썼습니다.
+   - AI 에게 초안을 받아도 됩니다. 단 기대값 · 경계 · `[확인 필요]` 는 내가 읽고 고칩니다 — AI 가 서로 부딪히는 AC 나 추측한 오류 문구를 확정값처럼 쓰는 일이 있습니다.
    - (선택) 큰 기능이면 2절에 우선순위 `P1 · P2` 를 나누고, 4절 줄 앞에 `[P1]` · `[P2]` 를 붙입니다(예: `- [ ] [P1] AC-1: …`). P1 만 만들어도 따로 테스트되고 쓸 수 있어야 하고, 무엇을 P1 에 둘지는 틀렸을 때의 피해 크기로 사람이 정합니다. 작은 기능이면 그 줄은 지웁니다.
 3. 어디서 확인할지 나눠 같은 파일 6절 '테스트 계획' 에 적기 (4분)
    - **웹 · 백엔드**: 화면(Playwright)으로 볼 것 1~2개, 나머지는 API · 단위 테스트로
@@ -375,11 +371,11 @@ git add e2e-ts/pages web/app.py; git commit -m "분류 후 수정"
 
 ### 보너스 — Playwright 테스트 에이전트(planner · generator · healer) 따라 하기 (선택, 약 20분)
 
-강의에서는 healer 를 돌린 결과를 화면으로만 보여 줍니다. 직접 해 보고 싶으면 아래 순서로 — Claude Code 가 필요합니다.
+직접 해 보고 싶으면 아래 순서로 — Claude Code 가 필요합니다.
 
 **목표**: AI 에게 테스트를 만들게 하고(planner → generator) 빨간불을 고치게 해 본다(healer). 고친 결과가 맞는지는 **사람이 `git diff` 로** 판정한다.
 
-강의 슬라이드 92 ~ 95 의 순서입니다. Playwright 의 AI 테스트 에이전트 3종(planner · generator · healer)을 돌려 보고, **healer 가 빨간불을 어떻게 '없애는지'** 봅니다. 이 순서는 Claude Code 기준입니다(`--loop=claude`).
+Playwright 의 AI 테스트 에이전트 3종(planner · generator · healer)을 돌려 보고, **healer 가 빨간불을 어떻게 '없애는지'** 봅니다. 이 순서는 Claude Code 기준입니다(`--loop=claude`).
 
 **연습용 폴더에서 합니다.** 실습 키트(`sdd-qa-lab`)는 실습③ 에서 버그를 고쳤기 때문에, 거기서 하면 빨간불이 안 나서 healer 가 할 일이 없습니다. 버그가 그대로 있는 복사본이 하나 더 필요합니다. 에이전트가 만드는 `tests/seed.spec.ts` · `.claude/` · `.mcp.json` 도 실습 키트에 섞이지 않습니다.
 
@@ -387,7 +383,7 @@ git add e2e-ts/pages web/app.py; git commit -m "분류 후 수정"
 ```bash
 npm install
 ```
-(브라우저는 강의 전에 받아 두었으니 다시 받지 않습니다. 맥은 이 폴더에도 venv 를 만들어 켠 터미널에서 합니다 — planner 가 앱을 띄울 때 `python` 이 필요합니다: `agents-practice` 에서 `python3 -m venv .venv` → `source .venv/bin/activate`)
+(브라우저는 이미 받아 두었으니 다시 받지 않습니다. 맥은 이 폴더에도 venv 를 만들어 켠 터미널에서 합니다 — planner 가 앱을 띄울 때 `python` 이 필요합니다: `agents-practice` 에서 `python3 -m venv .venv` → `source .venv/bin/activate`)
 
 **2) 에이전트 만들기** — 같은 `e2e-ts` 폴더에서
 ```bash
@@ -411,7 +407,7 @@ git add -A; git commit -m "에이전트 + seed"
 
 **5) 그 폴더에서 Claude Code** — VS Code → 파일 → 폴더 열기 → `agents-practice` 안의 `e2e-ts` → 그 창에서 Claude Code 새로 열기 → MCP 서버를 쓸지 물으면 허락 → `/agents` 에 playwright-test-planner · generator · healer 3개가 보이면 준비 끝. (터미널이라면 `e2e-ts` 에서 `claude`)
 
-**6) planner 에게** — Claude Code 채팅창에 아래 다섯 줄 그대로(입력 넷과 기대값을 빼면 엉뚱한 시나리오를 고릅니다 — 리허설에서 '정률 100% → 0원' 을 골라 버그 코드에서도 통과했습니다)
+**6) planner 에게** — Claude Code 채팅창에 아래 다섯 줄 그대로(입력 넷과 기대값을 빼면 엉뚱한 시나리오를 골라 버그를 못 잡습니다)
 ```
 playwright-test-planner 에이전트로 요금 계산 화면을 살펴보고,
 월 요금 3000 · 이용 시작일 2026-09-21 · 청구월 2026-09 ·
@@ -421,7 +417,7 @@ seed 는 tests/seed.spec.ts
 ```
 "시나리오 하나만" 과 기대 결과 줄을 꼭 넣습니다. 빼고 시켰더니 계획을 18개 만들고, 기대값은 저장소에서 강사용 정답(`instructor/`)을 찾아 썼습니다.
 
-**7) 계획 파일을 열어 기대값 확인** — 강사 PC 에서는 `specs/billing-floor-zero.plan.md` 가 생겼습니다(이름은 실행마다 다를 수 있습니다). 기대값이 화면 값(-4,000원)으로 적혀 있으면 명세 값으로 고쳐 저장합니다 — 계획이 곧 정답표입니다. 리허설에서는 `e2e-ts/e2e-ts/specs/` 처럼 폴더가 한 번 더 겹친 곳에 생기기도 했습니다 — `specs/` 에 없으면 그 아래를 찾습니다.
+**7) 계획 파일을 열어 기대값 확인** — `specs/` 아래에 `*.plan.md` 가 생깁니다(예: `billing-floor-zero.plan.md` — 이름은 실행마다 다릅니다). 기대값이 화면 값(-4,000원)으로 적혀 있으면 명세 값으로 고쳐 저장합니다 — 계획이 곧 정답표입니다. `e2e-ts/e2e-ts/specs/` 처럼 폴더가 한 번 더 겹친 곳에 생기기도 합니다 — `specs/` 에 없으면 그 아래를 찾습니다.
 
 **8) generator 에게** (계획 파일 이름이 다르면 그 이름으로. `already used` 가 나오면 planner 가 띄운 앱이 남은 것이니 그 창 · 터미널부터 끕니다)
 ```
@@ -443,7 +439,7 @@ playwright-test-healer 에이전트로 실패하는 테스트를 고쳐 줘
 git diff
 npx playwright test
 ```
-강사 PC 에서 두 번 돌려 두 번 다 같았습니다. healer 는 "원인은 테스트가 아니라 앱 버그라서, 기대값은 바꾸지 않았습니다" 라고 보고했지만, `test` 를 `test.fixme` 로 바꿔 건너뛰게 했습니다.
+healer 는 "원인은 테스트가 아니라 앱 버그라서, 기대값은 바꾸지 않았습니다" 라고 보고했지만, `test` 를 `test.fixme` 로 바꿔 건너뛰게 했습니다.
 ```diff
 -  test('정액 쿠폰이 요금보다 크면 청구 금액은 0원', async ({ page }) => {
 +  // APP BUG: 명세 R5(청구 금액 0원 바닥)와 달리 앱이
@@ -458,9 +454,9 @@ npx playwright test
   1 skipped
   2 passed
 ```
-실패 0개, CI 는 초록 — 리포트에서 버그가 '건너뜀' 으로 사라집니다. 그래서 **제품 버그면 healer 를 쓰지 않습니다.** 썼다면 `git diff` 에서 `fixme` · `skip` · 기대값 변경을 보고, 앱을 고친 뒤 `fixme` 를 지워 되돌립니다. 왜 그랬는지는 `.claude/agents/playwright-test-healer.md` 에 있습니다 — "Fixing assertions and expected values", "mark this test as test.fixme()", "Do not ask user questions" (슬라이드 94).
+실패 0개, CI 는 초록 — 리포트에서 버그가 '건너뜀' 으로 사라집니다. 그래서 **제품 버그면 healer 를 쓰지 않습니다.** 썼다면 `git diff` 에서 `fixme` · `skip` · 기대값 변경을 보고, 앱을 고친 뒤 `fixme` 를 지워 되돌립니다. 왜 그랬는지는 `.claude/agents/playwright-test-healer.md` 에 있습니다 — "Fixing assertions and expected values", "mark this test as test.fixme()", "Do not ask user questions".
 
-**healer 를 써도 되는 때** — 빨간불은 고치기 전에 넷으로 나눕니다(슬라이드 96). **화면 변경**(버튼 · 칸 이름이 바뀌어 못 찾음)이면 healer 가 고쳐도 됩니다 — 그래도 `git diff`. **제품 버그**(화면은 그대로인데 값이 명세와 다름)면 healer 를 쓰지 않고 코드를 고칩니다. **불안정**(다시 돌리면 통과)은 기다리는 방법을, **환경**(서버 · 네트워크)은 환경을 고칩니다.
+**healer 를 써도 되는 때** — 빨간불은 고치기 전에 넷으로 나눕니다. **화면 변경**(버튼 · 칸 이름이 바뀌어 못 찾음)이면 healer 가 고쳐도 됩니다 — 그래도 `git diff`. **제품 버그**(화면은 그대로인데 값이 명세와 다름)면 healer 를 쓰지 않고 코드를 고칩니다. **불안정**(다시 돌리면 통과)은 기다리는 방법을, **환경**(서버 · 네트워크)은 환경을 고칩니다.
 
 **막히면**: `/agents` 에 없다 → 연 폴더가 `e2e-ts` 인지 확인하고 Claude Code 를 새로 연다 · MCP 연결 실패 → `node -v` 20 이상 · Playwright 1.56 이상 · `.playwright-mcp/` 가 생긴다 → 에이전트 기록이니 `.gitignore` 에 넣는다.
 
@@ -470,7 +466,7 @@ npx playwright test
 
 ## 더 보기 — 지금 명세 주도(SDD)로 개발 중인 공개 저장소
 
-강의에서 본 흐름(명세 → 작업 → PR 이 명세를 가리킨다)을 실제 프로젝트에서 열어 보세요. 모두 실제 제품입니다 (2026-10-05 확인).
+명세 → 작업 → PR 이 명세를 가리키는 흐름을 실제 프로젝트에서 열어 보세요. 모두 실제 제품입니다 (2026-10-05 확인).
 
 | 저장소 | 도구 | 열어 볼 곳 |
 |---|---|---|
