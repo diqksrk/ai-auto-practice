@@ -73,8 +73,12 @@ def main() -> int:
     # E2E 는 테스트 전에 앱을 `${PYTHON:-python} ../web/app.py` 로 띄운다 (e2e-ts/playwright.config.ts)
     app_python = os.environ.get("PYTHON") or "python"
     app_major = run(app_python, "-c", "import sys; print(sys.version_info[0])", cwd=ROOT)
-    report(app_major == "3", f"E2E 가 앱을 띄울 파이썬 명령 '{app_python}'",
-           'python 명령이 없으면 E2E 를 PYTHON=py npx playwright test 로 (PowerShell: $env:PYTHON="py"; npx playwright test)')
+    if sys.platform == "darwin":
+        python_fix = ("맥: 키트 폴더에서 python3 -m venv .venv → source .venv/bin/activate 후 다시 (새 터미널마다 source) "
+                      "— 또는 export PYTHON=python3")
+    else:
+        python_fix = 'python 명령이 없으면 E2E 를 PYTHON=py npx playwright test 로 (PowerShell: $env:PYTHON="py"; npx playwright test)'
+    report(app_major == "3", f"E2E 가 앱을 띄울 파이썬 명령 '{app_python}'", python_fix)
 
     node = run("node", "-v")
     major = int(node.lstrip("v").split(".")[0]) if node.startswith("v") else 0

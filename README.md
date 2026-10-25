@@ -7,6 +7,7 @@
 ## 강의 전에 (Python · Node 가 있으면 10분) — 꼭 해 오세요
 
 1. 설치: Python 3.10 이상, Node.js 20 이상 (LTS), git
+   버전 확인(`python --version` · `node -v` · `git --version`)과 설치 방법(설치 파일 · winget · brew · nvm)은 [HANDS_ON.md 의 '강의 전에'](HANDS_ON.md#강의-전에-python--node-가-있으면-10분) 에 있습니다.
    git 을 처음 쓰면 이름과 메일도 한 번 정해 둡니다 (실습에서 커밋합니다).
    `git config --global user.name "내 이름"` · `git config --global user.email "내 메일"`
 2. 저장소를 받고 두 가지를 실행합니다.
@@ -34,8 +35,8 @@
 | `src/billing/proration.py` | AI 가 짠 요금 계산 코드 (실습 대상) |
 | `web/app.py` | 요금 계산 화면 (`python web/app.py` → http://127.0.0.1:8000) |
 | `tests/` | AI 가 코드와 함께 짠 단위 테스트 7개 |
-| `e2e-ts/` | **Playwright E2E** — `pages/` 화면 객체, `tests/` 화면 테스트, `playwright.config.ts` |
-| `specs/` | 명세 템플릿, 실습① 에서 채울 빈 명세, 출시 점검 리스트 예시(`RELEASE_CHECKLIST.md`) |
+| `e2e-ts/` | **Playwright E2E** — `pages/` 화면 객체, `tests/` 화면 테스트, `mobile/` 폰 화면 테스트(보너스 — 3시간 강의에서는 안 함, `playwright.mobile.config.ts` 로만 돈다), `playwright.config.ts`, `package.json`(`npm run codegen` · `ui` · `report`) |
+| `specs/` | 명세 템플릿(`TEMPLATE.md` 8칸 — 큰 기능이면 2절에 우선순위 P1 · P2, 4절 AC 줄 앞에 `[P1]`), 실습① 에서 채울 빈 명세(`proration.md`), 출시 점검 리스트 예시(`RELEASE_CHECKLIST.md`) |
 | `prompts/` | 실습별 프롬프트 카드 (복사해서 쓰세요) |
 | `tools/lab4_change.py` | 실습④: "동료의 PR" 을 적용/되돌리기 |
 | `tools/mutate.py` | (보너스) 테스트가 버그를 잡는지 채점하는 뮤테이션 도구 |
@@ -50,12 +51,15 @@
 
 | 실습 | 시간 | 하는 일 | 프롬프트 |
 |---|---|---|---|
-| ① 명세 쓰기 | 7분 | `specs/proration.md` 의 빈칸을 AI 인터뷰로 채운다 | `01_명세_인터뷰.md` |
+| ① 명세 쓰기 | 10분 | `specs/proration.md` 의 빈칸을 AI 인터뷰로 채운다 | `01_명세_인터뷰.md` |
 | ② 눈으로 버그 찾기 | 3분 | `src/billing/proration.py` 를 읽고 버그를 찾는다 (AI 없이) | — |
-| ③ 명세로 E2E 만들기 | 12분 | 명세 예시(8번 포함) → Playwright 테스트 → **커밋** → 빨간불 → 리포트·트레이스로 원인 보기 → AI 가 코드만 고친다 → **커밋** | `02_E2E_테스트_만들기.md`, `03_코드만_고치기.md` |
+| codegen 녹화 따라 하기 | 7분 | 앱을 켜고 클릭을 녹화 → 녹화한 기대값으로는 초록 → 명세 값(0원)으로 바꾸면 빨강 → 연습 파일 지우기 | — (HANDS_ON) |
+| ③ 명세로 E2E 만들기 | 15분 | 명세 예시(8번 포함) → Playwright 테스트 → **커밋** → 빨간불 → 리포트·트레이스로 원인 보기 → AI 가 코드만 고친다 → **커밋** | `02_E2E_테스트_만들기.md`, `03_코드만_고치기.md` |
 | ③-2 같은 명세를 API 로 | 3분 | 정답 API 테스트를 복사해 돌리고 읽는다 — 브라우저 없이 `POST /api/charge` 로 예시 8 + 오류 예시 10. 시간이 남으면 AI 로 직접 | `06_API_E2E_만들기.md` |
-| ④ E2E 실패 분류 | 12분 | 동료 PR 적용 → 단위 테스트는 초록, E2E 는 빨강 → AI 에게 "분류부터" (고칠 때마다 다시 분류). API 테스트를 만들었다면 제품 버그가 API 쪽에서 먼저 보인다 | `04_E2E_실패분류.md` |
-| ⑤ 우리 팀에 적용 | 8분 | 팀 서비스의 핵심 흐름 하나를 AC 5개로 + 어디서 볼지(화면 · API · 단위). **앱 팀은 Maestro 흐름 초안 + 화면 id 계약 표** | `specs/TEMPLATE.md`, 앱: `07_앱_흐름_초안.md` |
+| ④ 동료 PR 이 E2E 를 깨뜨렸다 | 15분 | 동료 PR 적용 → 단위 테스트는 초록, E2E 는 빨강 → AI 에게 "분류부터" (고칠 때마다 다시 분류). API 테스트를 만들었다면 제품 버그가 API 쪽에서 먼저 보인다 | `04_E2E_실패분류.md` |
+| ⑤ 우리 팀 핵심 흐름 | 15분 | 팀 서비스의 핵심 흐름 하나를 AC 5개로 + 어디서 볼지(화면 · API · 단위)를 명세 6절 '테스트 계획' 에 + 나눠 보기 5분. **앱 팀은 Maestro 흐름 초안 + 화면 id 계약 표** | `specs/TEMPLATE.md`, 앱: `07_앱_흐름_초안.md` |
+
+모든 실습의 순서 · 명령 · 실제 출력은 [HANDS_ON.md](HANDS_ON.md) 에 있습니다. 강의에서 결과만 화면으로 보여 주는 Playwright 테스트 에이전트(planner · generator · healer) 따라 하기와 폰 화면 실습(`08_폰_화면_고치기.md`)은 보너스입니다.
 
 PR 을 올릴 때는 `.github/pull_request_template.md` 의 **AC 이행 현황** 표를 채웁니다 — 명세의 AC 를 그대로 옮기고, 무엇으로 확인했는지 적습니다.
 
@@ -64,10 +68,11 @@ PR 을 올릴 때는 `.github/pull_request_template.md` 의 **AC 이행 현황**
 | 명령 | 하는 일 |
 |---|---|
 | `npx playwright test` | 전부 실행 |
-| `npx playwright show-report` | HTML 리포트 — 실패 원인, 스크린샷, 트레이스 |
-| `npx playwright test --ui` | UI 모드 — 한 화면에서 실행·되감기 |
-| `npx playwright codegen http://127.0.0.1:8000` | 화면을 클릭하면 테스트 코드가 생긴다 (앱을 먼저 `python ../web/app.py` 로 띄울 것) |
-| `npx playwright init-agents --loop=claude` | AI 테스트 에이전트(planner · generator · healer) 파일 만들기. `tests/seed.spec.ts` 가 생기므로 빈 폴더에서 먼저 해 보기를 권장 |
+| `npx playwright test -c playwright.mobile.config.ts` | 폰 화면 테스트만 (`mobile/` 폴더, Pixel 7 · iPhone 15 흉내 — 보너스). 위의 기본 실행에는 섞이지 않는다 |
+| `npx playwright show-report` (= `npm run report`) | HTML 리포트 — 실패 원인, 스크린샷, 트레이스. 다 봤으면 Ctrl+C |
+| `npx playwright test --ui` (= `npm run ui`) | UI 모드 — 한 화면에서 실행·되감기 |
+| `npm run codegen` (= `npx playwright codegen http://127.0.0.1:8000`) | 화면을 클릭하면 테스트 코드가 생긴다. 앱은 다른 터미널에서 먼저 띄우고(키트 루트에서 `python web/app.py`), 녹화가 끝나면 Ctrl+C 로 끈다 — 켜 두면 테스트가 'already used' 로 시작을 못 한다 |
+| `npx playwright init-agents --loop=claude` | AI 테스트 에이전트(planner · generator · healer) 파일 만들기. `tests/seed.spec.ts` · `.claude/` · `.mcp.json` 이 생기므로 **실습 키트가 아니라 다른 폴더에 받은 연습용 복사본의 `e2e-ts`** 에서 (HANDS_ON 보너스) |
 
 ## 규칙 세 가지
 
@@ -83,4 +88,4 @@ PR 을 올릴 때는 `.github/pull_request_template.md` 의 **AC 이행 현황**
 
 **관문** — [ ] AI 편집마다 테스트(훅) · [ ] PR 에서 CI 필수 + 브랜치 보호 · [ ] 테스트 파일 변경은 따로 승인 · [ ] 출시 전 QA 점검 리스트(Go / No-Go)
 
-**AI 검증** — [ ] 실패는 분류부터 (화면 변경 / 제품 버그 / 불안정 / 환경) · [ ] 제품 버그면 테스트 수정 금지 · [ ] 쓴 AI ≠ 검증 AI · [ ] 최종 판단은 사람
+**AI 검증** — [ ] 실패는 분류부터 (화면 변경 / 제품 버그 / 불안정 / 환경) · [ ] 제품 버그면 테스트 수정 금지 · [ ] healer 처럼 '고쳐 주는' AI 를 썼으면 git diff 에서 fixme · skip · 기대값 변경 · [ ] 쓴 AI ≠ 검증 AI · [ ] 최종 판단은 사람
